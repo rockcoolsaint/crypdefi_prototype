@@ -10,4 +10,7 @@ router.post('/create-wallet', (req, res) => walletController.createWallet(req, r
 // Route to sign a transaction
 router.post('/sign-transaction', (req, res) => walletController.signTransaction(req, res));
 
+// Route to list all wallets
+router.get('/api/wallet/list-wallets', walletController.listWallets);
+
 export default router;

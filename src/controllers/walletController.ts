@@ -5,6 +5,18 @@ import { KmsService } from '../services/kmsService';
 const kmsService = new KmsService();
 
 export class WalletController {
+    // List all existing wallets (KMS keys)
+    async listWallets(req: Request, res: Response) {
+        try {
+            const wallets = await kmsService.listAllWallets();
+            res.json(wallets);  // Send the wallets as JSON response
+        } catch (err) {
+            if (err instanceof Error){
+                res.status(500).json({ error: err.message });
+              }
+        }
+    }
+
     // Create a new wallet
     async createWallet(req: Request, res: Response) {
         try {
@@ -27,7 +39,7 @@ export class WalletController {
         const { walletId, transactionData } = req.body;
 
         try {
-            const signature = await kmsService.signMessage(walletId, transactionData);
+            const signature = await kmsService.signTransaction(walletId, transactionData);
             res.json({
                 transactionData,
                 signature: signature.Signature?.toString('base64')
