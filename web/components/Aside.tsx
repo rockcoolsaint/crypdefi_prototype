@@ -10,8 +10,8 @@ const Aside = () => {
             <Button variant="default" className="mb-4 hidden md:block">Connect Metamask</Button>
             <Card className="w-full">
                 <CardHeader>
-                    <CardTitle>Create project</CardTitle>
-                    <CardDescription>Deploy your new project in one-click.</CardDescription>
+                    <CardTitle>Transact Funds</CardTitle>
+                    <CardDescription>Transfer funds in one-click.</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form>

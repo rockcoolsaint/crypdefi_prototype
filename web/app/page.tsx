@@ -33,9 +33,11 @@ import { IoMdHome } from "react-icons/io";
 import { BsViewList } from "react-icons/bs";
 import Header from "@/components/Header";
 import Aside from "@/components/Aside";
+import WalletList from "@/components/WalletList";
 
 
 export default function Home() {
+  // const res = await
   return (
     <div className="h-screen">
       <Header />
@@ -57,56 +59,10 @@ export default function Home() {
               </div>
 
               <div className="mt-8">
-                <ul className="space-y-2">
-                  <li>
-                    <div className="flex justify-between items-center border border-slate-200 py-2 px-4 rounded-lg">
-                      <div className="flex flex-col">
-                        <span>Bitcoin</span>
-                        <span className="text-xs text-slate-500">BTC</span>
-                      </div>
-                      <div className="">
-                        <span>$5,230.12</span>
-                        <span className="text-green-500 text-xs"><MdArrowDropUp className="inline-block ml-2" />2.31%</span>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex justify-between items-center border border-slate-200 py-2 px-4 rounded-lg">
-                      <div className="flex flex-col">
-                        <span>Bitcoin</span>
-                        <span className="text-xs text-slate-500">BTC</span>
-                      </div>
-                      <div className="">
-                        <span>$5,230.12</span>
-                        <span className="text-green-500 text-xs"><MdArrowDropUp className="inline-block ml-2" />2.31%</span>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex justify-between items-center border border-slate-200 py-2 px-4 rounded-lg">
-                      <div className="flex flex-col">
-                        <span>Bitcoin</span>
-                        <span className="text-xs text-slate-500">BTC</span>
-                      </div>
-                      <div className="">
-                        <span>$5,230.12</span>
-                        <span className="text-green-500 text-xs"><MdArrowDropUp className="inline-block ml-2" />2.31%</span>
-                      </div>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex justify-between items-center border border-slate-200 py-2 px-4 rounded-lg">
-                      <div className="flex flex-col">
-                        <span>Bitcoin</span>
-                        <span className="text-xs text-slate-500">BTC</span>
-                      </div>
-                      <div className="">
-                        <span>$5,230.12</span>
-                        <span className="text-green-500 text-xs"><MdArrowDropUp className="inline-block ml-2" />2.31%</span>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
+                <div>
+                  <h1>Wallets from AWS KMS</h1>
+                  <WalletList />
+                </div>
                 <Link href="/wallets" className="text-sm mt-4 text-blue-400 inline-block">View all Wallets</Link>
               </div>
             </div>

@@ -1,5 +1,6 @@
 api/node_modules
 api/.env
+api/dist
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
@@ -30,6 +31,7 @@ web/yarn-error.log*
 
 # local env files
 web/.env*.local
+web/.env
 
 # vercel
 web/.vercel

@@ -42,7 +42,7 @@ export class WalletController {
             const signature = await kmsService.signTransaction(walletId, transactionData);
             res.json({
                 transactionData,
-                signature: signature.Signature?.toString('base64')
+                signature: signature
             });
         } catch (err) {
           if (err instanceof Error) {
