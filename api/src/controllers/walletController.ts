@@ -1,8 +1,12 @@
 import { Request, Response } from 'express';
 import { KmsService } from '../services/kmsService';
+import { deriveEthereumAddress, TransactionService } from '../services/transactionService';
 
 // Initialize KMS Service
 const kmsService = new KmsService();
+
+// Initialize Transaction Service
+const transactionService = new TransactionService();
 
 export class WalletController {
     // List all existing wallets (KMS keys)
@@ -14,6 +18,21 @@ export class WalletController {
             if (err instanceof Error){
                 res.status(500).json({ error: err.message });
               }
+        }
+    }
+
+    // Derive Ethereum Address from wallets (KMS keys)
+    async getEthereumWalletAddress(req: Request, res: Response) {
+        const { keyId } = req.params;
+
+        try {
+            // Derive the Ethereum address
+            const ethAddress = await kmsService.getEthereumAddressFromKMS(keyId);
+            res.json({ ethereumAddress: ethAddress });
+        } catch (err) {
+            if (err instanceof Error) {
+                res.status(500).json({ error: err.message });
+            }
         }
     }
 

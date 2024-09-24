@@ -11,6 +11,9 @@ router.post('/create-wallet', (req, res) => walletController.createWallet(req, r
 router.post('/sign-transaction', (req, res) => walletController.signTransaction(req, res));
 
 // Route to list all wallets
-router.get('/api/wallet/list-wallets', walletController.listWallets);
+router.get('/list-wallets', walletController.listWallets);
+
+// Route to derive Ethereum address from KMS KeyID
+router.get('/derive-eth-address/:keyId', walletController.getEthereumWalletAddress);
 
 export default router;

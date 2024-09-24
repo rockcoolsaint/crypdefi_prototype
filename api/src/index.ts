@@ -13,15 +13,15 @@ app.use(express.json());
 app.use('/api/wallet', walletRoutes);
 
 
-// Example usage
-const transactionService = new TransactionService();
-const walletId = '1234abcd-12ab-34cd-56ef-1234567890ab';  // Replace with actual walletId
-const toAddress = '0xRecipientAddressHere';  // Replace with actual Sepolia address
-const amountInEth = '0.01';  // Amount to transfer
+// // Example usage
+// const transactionService = new TransactionService();
+// const walletId = '1234abcd-12ab-34cd-56ef-1234567890ab';  // Replace with actual walletId
+// const toAddress = '0xRecipientAddressHere';  // Replace with actual Sepolia address
+// const amountInEth = '0.01';  // Amount to transfer
 
-transactionService.sendSepoliaTransaction(walletId, toAddress, amountInEth)
-    .then(() => console.log('Transaction sent successfully'))
-    .catch(err => console.error('Error sending transaction:', err));
+// transactionService.sendSepoliaTransaction(walletId, toAddress, amountInEth)
+//     .then(() => console.log('Transaction sent successfully'))
+//     .catch(err => console.error('Error sending transaction:', err));
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);

@@ -1,5 +1,6 @@
-import { JsonRpcProvider, Transaction, TransactionRequest } from 'ethers';
+import { JsonRpcProvider, Transaction, TransactionRequest, keccak256 } from 'ethers';
 import AWS from 'aws-sdk';
+import * as asn1 from 'asn1.js';
 import * as dotenv from 'dotenv';
 import crypto from 'crypto';
 
@@ -10,7 +11,18 @@ dotenv.config();
 const kms = new AWS.KMS();
 
 // Connect to Sepolia Testnet using Infura
-const provider = new JsonRpcProvider(`https://sepolia.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+const provider = new JsonRpcProvider(process.env.Alchemy_SEPOLIA_LINK);
+
+// ASN.1 EC public key structure (for AWS KMS elliptic curve keys)
+const EcdsaPubKey = asn1.define('EcdsaPubKey', function (this: any) {
+    this.seq().obj(
+        this.key('algo').seq().obj(
+            this.key('algorithm').objid(),
+            this.key('params').objid()
+        ),
+        this.key('pubKey').bitstr()
+    );
+});
 
 export class KmsService {
     // Generate a new key pair using KMS
@@ -25,13 +37,13 @@ export class KmsService {
     // Retrieve all existing KMS keys (wallets)
     async listAllWallets(): Promise<any[]> {
         let wallets: any[] = [];
-        let nextMarker: string | undefined = undefined;
-        let truncated: boolean = true;
+        // let nextMarker: string | undefined = undefined;
+        // let truncated: boolean = true;
 
         try {
-            while (truncated) {
+            // while (truncated) {
                 // Step 1: List all key IDs using the listKeys API
-                const keysList = await kms.listKeys({ Marker: nextMarker }).promise();
+                const keysList = await kms.listKeys().promise();
 
                 const wallets: any[] = [];
 
@@ -49,7 +61,7 @@ export class KmsService {
                     });
                 }
 
-            }
+            // }
 
             return wallets;  // Return an array of wallet details
         } catch (err) {
@@ -64,6 +76,28 @@ export class KmsService {
     async getPublicKey(keyId: string): Promise<AWS.KMS.GetPublicKeyResponse> {
         const params = { KeyId: keyId };
         return kms.getPublicKey(params).promise();
+    }
+
+    // Function to retrieve the public key from AWS KMS
+    async getPublicKeyFromKMS(keyId: string): Promise<Buffer> {
+        const params = { KeyId: keyId };
+        const data = await kms.getPublicKey(params).promise();
+        if (data.PublicKey) {
+        // // Ensure data.PublicKey is converted to Buffer if it is a Uint8Array
+        // const publicKeyBuffer = Buffer.isBuffer(data.PublicKey) 
+        //     ? data.PublicKey 
+        //     : Buffer.from(data.PublicKey as Uint8Array); // Cast if necessary
+
+        // // Convert the Buffer to a hex string
+        // return publicKeyBuffer.toString('hex');
+        // Parse the ASN.1-encoded EC public key to extract the actual public key
+            const publicKeyInfo = EcdsaPubKey.decode(data.PublicKey, 'der');
+            const publicKeyBuffer = publicKeyInfo.pubKey.data; // Extract actual public key data (uncompressed)
+
+            return Buffer.from(publicKeyBuffer);
+        } else {
+        throw new Error('No public key found for the given KeyId');
+        }
     }
 
     // Retrieve wallet address based on the walletId from KMS
@@ -96,5 +130,30 @@ export class KmsService {
         const signResult = kms.sign(params).promise();
 
         return (await signResult).Signature?.toString('hex') || '';
+    }
+
+    // Service to get the public key from KMS and derive the Ethereum address
+    async getEthereumAddressFromKMS(keyId: string): Promise<string> {
+        // Fetch the public key from AWS KMS
+        const params = { KeyId: keyId };
+        const data = await kms.getPublicKey(params).promise();
+
+        if (!data.PublicKey) {
+            throw new Error('No public key found for the given KeyId');
+        }
+
+        // The public key will be returned in DER format (ASN.1 encoded)
+        // const publicKey = Buffer.from(data.PublicKey);
+        const publicKey = EcdsaPubKey.decode(data.PublicKey, 'der');
+        const publicKeyBuffer = publicKey.pubKey.data; // Extract actual public key data (uncompressed)
+
+        // Extract the uncompressed public key (strip the first byte if present)
+        const uncompressedPublicKey = publicKeyBuffer.length === 65 ? publicKeyBuffer.slice(1) : publicKeyBuffer;
+
+        // Hash the public key with Keccak-256 to get the Ethereum address
+        const ethAddress = keccak256(uncompressedPublicKey.slice(1));  // Skip the EC prefix
+        const ethAddressFormatted = `0x${ethAddress.slice(-40)}`;  // Get the last 20 bytes of the hash
+
+        return ethAddressFormatted;
     }
 }
