@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { KmsService } from '../services/kmsService';
-import { deriveEthereumAddress, TransactionService } from '../services/transactionService';
+import { TransactionService } from '../services/transactionService';
 
 // Initialize KMS Service
 const kmsService = new KmsService();
@@ -63,6 +63,20 @@ export class WalletController {
                 transactionData,
                 signature: signature
             });
+        } catch (err) {
+          if (err instanceof Error) {
+            res.status(500).json({ error: err.message });
+          }
+        }
+    }
+
+    // Send sepolia ETH transaction
+    async sendSepoliaEthTransaction(req: Request, res: Response) {
+        const { walletId, toAddress, amountInEth } = req.body;
+
+        try {
+            const result = await transactionService.sendSepoliaTransaction(walletId, toAddress, amountInEth);
+            res.json(result);
         } catch (err) {
           if (err instanceof Error) {
             res.status(500).json({ error: err.message });

@@ -1,4 +1,4 @@
-import { JsonRpcProvider, ethers, getAddress, keccak256, parseEther } from 'ethers';
+import { JsonRpcProvider, ethers, formatEther, getAddress, keccak256, parseEther } from 'ethers';
 import { KmsService } from './kmsService';
 import * as dotenv from 'dotenv';
 
@@ -46,7 +46,7 @@ export class TransactionService {
 
   // Send Sepolia transaction using KMS-backed wallet
   async sendSepoliaTransaction(walletId: string, toAddress: string, amountInEth: string) {
-    const walletAddress = await this.kmsService.getWalletAddress(walletId);
+    const walletAddress = await this.kmsService.getEthereumAddressFromKMS(walletId);
     const balance = await provider.getBalance(walletAddress);
 
     console.log(`Wallet balance: ${formatEther(balance)} ETH`);
@@ -74,8 +74,5 @@ export class TransactionService {
     const receipt = await txResponse.wait();
     console.log('Transaction confirmed:', receipt);
   }
-}
-function formatEther(balance: bigint) {
-  throw new Error('Function not implemented.');
 }
 

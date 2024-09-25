@@ -16,4 +16,7 @@ router.get('/list-wallets', walletController.listWallets);
 // Route to derive Ethereum address from KMS KeyID
 router.get('/derive-eth-address/:keyId', walletController.getEthereumWalletAddress);
 
+// Route to send sepolia ETH Transaction
+router.post('/send-transaction', walletController.sendSepoliaEthTransaction);
+
 export default router;
