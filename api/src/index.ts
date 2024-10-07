@@ -4,7 +4,7 @@ import walletRoutes from './routes/walletRoutes';
 import { TransactionService } from './services/transactionService';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3030;
 
 // Middleware
 app.use(express.json());

@@ -29,7 +29,7 @@ export class KmsService {
     async createKey(): Promise<AWS.KMS.CreateKeyResponse> {
         const params = {
             KeyUsage: 'SIGN_VERIFY',
-            KeySpec: 'ECC_NIST_P256',
+            KeySpec: 'ECC_NIST_P256', //replace value with: ECC_SECG_P256K1 (secp256k1), commonly used for cryptocurrencies.
         };
         return kms.createKey(params).promise();
     }
@@ -119,12 +119,12 @@ export class KmsService {
         const serializedTransaction = transaction.serialized;
 
         // Step 4: Create a SHA-256 digest of the transaction string
-        const messageDigest = crypto.createHash('sha256').update(serializedTransaction).digest();
+        const messageDigest = crypto.createHash('sha256').update(serializedTransaction).digest(); // keccack instead of sha256
 
         const params = {
             KeyId: keyId,
             Message: Buffer.from(messageDigest),
-            MessageType: 'RAW',
+            MessageType: 'RAW', //use digest "DIGEST" MessageType: 'DIGEST'
             SigningAlgorithm: 'ECDSA_SHA_256',
         };
         const signResult = kms.sign(params).promise();
